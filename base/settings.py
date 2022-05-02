@@ -28,7 +28,7 @@ SECRET_KEY = '4gc^0_q3l3q1i(=9@7vacxv8^x4s)ydhn6c-yta-(1kby(z!=m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['stopbully.herokuapp.com']
+ALLOWED_HOSTS = ['stopbully.herokuapp.com', 'localhost', ]
 
 AUTH_USER_MODEL = 'api.CustomUser'
 REST_FRAMEWORK= {
@@ -89,10 +89,10 @@ WSGI_APPLICATION = 'base.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'debcje2k2dscv2',
-        'USER' : 'htyvwishsmtktm',
-        'PASSWORD' : 'dec8b8665b92660ae01417fcfc9d868607e4b7fcd4b5599a916705500ea4b7e4',
-        'HOST' : 'ec2-52-18-116-67.eu-west-1.compute.amazonaws.com',
+        'NAME': 'dd5p340be67e0n',
+        'USER' : 'tdgcrhvolwcesw',
+        'PASSWORD' : '96ce1b5bd9c793098704fe453a43dcdbdf51e6177803c45a0911241f3275e65f',
+        'HOST' : 'ec2-99-80-170-190.eu-west-1.compute.amazonaws.com',
         'PORT' : '5432'
     }
 }
