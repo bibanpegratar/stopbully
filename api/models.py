@@ -10,7 +10,6 @@ from rest_framework.authtoken.models import Token
 class CustomUser(AbstractUser):
     email = models.EmailField('email address', unique=True)
     # username = None
-    usermame = models.CharField(max_length=250, null=True, unique=False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
