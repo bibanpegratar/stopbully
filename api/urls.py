@@ -1,19 +1,56 @@
 from django.urls import path
 from .views import *
 from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework import renderers
+
+post_list = PostViewSet.as_view({
+    'get' : 'list',
+    'post' : 'create'
+})
+
+post_detail = PostViewSet.as_view({
+    'get' : 'retrieve',
+    'put' : 'update',
+    'delete' : 'destroy'
+})
+
+retrieve_by_user = PostViewSet.as_view({
+    'get' : 'retrieve_by_user'
+})
+
+user_list = UserViewSet.as_view({
+    'get' : 'list'
+})
+
+user_detail = UserViewSet.as_view({
+    'get' : 'retrieve'
+})
+
+comment_list = CommentViewSet.as_view({
+    'get' : 'list',
+    'post' : 'create'
+})
+comment_detail = CommentViewSet.as_view({
+    'get' : 'retrieve'
+})
+
+retrieve_by_post = CommentViewSet.as_view({
+    'get' : 'retrieve_by_post'
+})
 
 urlpatterns = [
-    path('users/', UsersAPIView.as_view()),                                       #all user
-    path('user/', UserAPIView.as_view()),                                         #user by id
-    path('login/', obtain_auth_token, name='login'),                              #login user
-    path('register/', UserRegisterAPIView.as_view()),                             #register user
- 
-    path('comments/', CommentsAPIView.as_view()),                                  #all comments
-    path('posts/', PostsAPIView.as_view()),                                       #all posts
- 
-    path('user/posts/', PostsUserAPIView.as_view()),                       #current user's posts
+    path('users/', user_list),
+    path('users/<int:pk>', user_detail),
+    path('login/', obtain_auth_token, name='login'),
+    path('register/', UserRegisterAPIView.as_view()),
 
-    # path('post/<int:id/comments', CommentsPostAPIView.as_view()),                  #all comments of a post
-    # path('post/int:post_id/comments/<int:comment_id>/', CommentAPIView.as_view()) #comment of a post
+    path('comments/', comment_list),
+    path('comments/<int:pid>/', retrieve_by_post),
+    path('comments/<int:pid>/<int:pk>/', comment_detail),
+    
+    path('posts/', post_list),
+    path('posts/<int:uid>/<int:pk>/', post_detail),
+    path('posts/<int:uid>/', retrieve_by_user)
     
 ]
+
