@@ -21,21 +21,19 @@ class UserAPIView(APIView):
     serializer_class = UserSerializer
 
     def get(self, request, *args, **kwargs):
-        uid = request.query_params["uid"]
-        if uid != None:
-            try:
-                user = CustomUser.objects.get(id=uid)
-                serializer = UserSerializer(user)
-                return Response(serializer.data)
-            except CustomUser.DoesNotExist:
-                return Response(serializer.errors, status = status.HTTP_404_NOT_FOUND)
-        else:
-            try:
-                user = request.user
-                serializer = UserSerializer(user)
-                return Response(serializer.data)
-            except Token.DoesNotExist:
-                return Response(serializer.errors, status = status.HTTP_404_NOT_FOUND)
+        try:
+            uid = request.query_params["uid"]
+            if uid != None:
+                    user = CustomUser.objects.get(id=uid)
+                    serializer = UserSerializer(user)
+                    return Response(serializer.data)
+            
+        except:
+            user = request.user
+            serializer = UserSerializer(user)
+
+        return Response(serializer.data)
+
         
         
 class UserRegisterAPIView(APIView):
