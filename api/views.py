@@ -24,9 +24,8 @@ class UserAPIView(APIView):
         try:
             uid = request.query_params["uid"]
             if uid != None:
-                    user = CustomUser.objects.get(id=uid)
-                    serializer = UserSerializer(user)
-                    return Response(serializer.data)
+                user = CustomUser.objects.get(id=uid)
+                serializer = UserSerializer(user)
             
         except:
             user = request.user
