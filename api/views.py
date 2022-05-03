@@ -24,10 +24,13 @@ class UserIDAPIView(APIView):
 class UserTokenAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        user = Token.objects.get(key='token').user
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
+        try:
+            user = request.user
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        except Token.DoesNotExist:
+            return Response(serializer.errors, status = status.HTTP_404_NOT_FOUND)
+        
         
 class UserRegisterAPIView(APIView):
     def post(self, request):
