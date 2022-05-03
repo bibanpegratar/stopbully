@@ -1,3 +1,4 @@
+import re
 from sqlite3 import SQLITE_DROP_INDEX
 from statistics import multimode
 from .models import CustomUser, Post, Comment
@@ -28,10 +29,13 @@ class UserAPIView(APIView):
             if uid != None:
                 user = CustomUser.objects.get(id=uid)
                 serializer = UserSerializer(user)
+
+            else:
+                user = request.user
+                serializer = UserSerializer(user)
             
         except:
-            user = request.user
-            serializer = UserSerializer(user)
+            return Response("not found", status = status.HTTP_404_NOT_FOUND)
 
         return Response(serializer.data)   
 
@@ -39,17 +43,57 @@ class PostsUserAPIView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
 
-    def get(self, request, *args, **kwargs):
+    def get_uid(self, request, *args, **kwargs):
         try:
-            uid = request.query_params["uid"]
+            uid = request.query_params['uid']
             if uid != None:
                 posts = Post.objects.filter(user_id=uid)
+                print('found by uid')
                 serializer = PostSerializer(posts, many=True)
+                return serializer.data
         except:
-            posts = Post.objects.filter(user_id=request.user.id)
-            serializer = PostSerializer(posts, many=True)
+            return False
 
-        return Response(serializer.data)
+    def get_pid(self, request):
+        try:
+            pid = request.query_params['pid']
+            if pid != None:
+                post = Post.objects.get(id=pid)
+                print('found by ')
+                serializer = PostSerializer(post)
+                return serializer.data
+        except:
+            return False
+    
+    def get_curr_post(self, request, *args, **kwargs):
+        posts = Post.objects.filter(user_id=request.user.id)
+        if posts:
+            serializer = PostSerializer(posts, many=True)
+            return serializer.data
+        else: 
+            return False
+
+
+    def get(self, request, *args, **kwargs):
+
+        error_response = Response("not found", status = status.HTTP_404_NOT_FOUND)
+        uid_data = self.get_uid(request)
+        pid_data = self.get_pid(request)
+       
+        if uid_data != error_response:
+            pass
+        else:
+            data = uid_data
+        
+        if pid_data != error_response:
+            data = pid_data
+
+        # if self.get_curr_post(request) != False:
+        #     data = pid_data
+        
+        return Response(data)
+
+
         
 class UserRegisterAPIView(APIView):
     def post(self, request):
