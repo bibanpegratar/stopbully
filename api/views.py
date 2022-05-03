@@ -25,10 +25,10 @@ class UserRegisterAPIView(APIView):
         response_data = {}
         if serializer.is_valid():
             account = serializer.save()
-            account = CustomUser.objects.get(pk=account.pk)
+            account = CustomUser.objects.get(pk=account.id)
             account.user = 'user_' + str(account.pk)
             account = account.save()
-            response_data['id'] = account.pk
+            response_data['id'] = account.id
             response_data['user'] = account.user
             response_data['email'] = account.email
             token = Token.objects.get(user=account).key
