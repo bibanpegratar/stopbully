@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 
 class UsersAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
     def get(self, request):
         users = CustomUser.objects.all()
         serializer = UserSerializer(users, many = True)
@@ -17,6 +18,7 @@ class UsersAPIView(APIView):
 #view for getting user with token specified in headers
 class UserAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
 
     def get(self, request, *args, **kwargs):
         uid = request.query_params["uid"]
