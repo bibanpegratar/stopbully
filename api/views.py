@@ -18,7 +18,7 @@ class UsersAPIView(APIView):
 class UserAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, id):
+    def get(self, request, *args, **kwargs):
         id = request.query_params["id"]
         if id != None:
             try:
