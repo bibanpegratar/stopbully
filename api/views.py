@@ -14,13 +14,7 @@ class UsersAPIView(APIView):
         serializer = UserSerializer(users, many = True)
         return Response(serializer.data)
 
-class UserIDAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request):
-        user = CustomUser.objects.get(id=request.data['id'])
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
+#view for getting user with token specified in headers
 class UserTokenAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
