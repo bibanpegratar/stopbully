@@ -11,7 +11,7 @@ urlpatterns = [
     path('comments/', CommentsAPIView.as_view()),                                  #all comments
     path('posts/', PostsAPIView.as_view()),                                       #all posts
  
-    # path('user/posts/', PostsCurrentUserAPIView.as_view()),                       #current user's posts
+    path('user/posts/', PostsUserAPIView.as_view()),                       #current user's posts
     # path('user/posts/<int:id>', PostCurrentUserAPIView.as_view()),                 #post of a current user
     # path('user/<int:id>/posts/', PostUserAPIView.as_view()),                      #posts of a user by id
     # path('user/<int:uid>/posts/<int:post_id>', PostAPIView.as_view()),            #post of a user

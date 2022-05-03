@@ -1,3 +1,5 @@
+from sqlite3 import SQLITE_DROP_INDEX
+from statistics import multimode
 from .models import CustomUser, Post, Comment
 from .serializers import CommentSerialzier, PostSerializer, UserSerializer, RegisterSerializer
 from rest_framework import permissions, status, viewsets
@@ -31,9 +33,23 @@ class UserAPIView(APIView):
             user = request.user
             serializer = UserSerializer(user)
 
-        return Response(serializer.data)
+        return Response(serializer.data)   
 
-        
+class PostsUserAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+
+    def get(self, request, *args, **kwargs):
+        try:
+            uid = request.query_params["uid"]
+            if uid != None:
+                posts = Post.objects.filter(user_id=uid)
+                serializer = PostSerializer(posts, many=True)
+        except:
+            posts = Post.objects.filter(user_id=request.user.id)
+            serializer = PostSerializer(posts, many=True)
+
+        return Response(serializer.data)
         
 class UserRegisterAPIView(APIView):
     def post(self, request):
@@ -45,8 +61,8 @@ class UserRegisterAPIView(APIView):
             account.user = 'user_' + str(account.pk)
             new_account = account.save()
             response_data['id'] = account.id
-            response_data['user'] = account.user
-            response_data['email'] = account.email
+            # response_data['user'] = account.user
+            # response_data['email'] = account.email
             token = Token.objects.get(user=account).key
             response_data['token'] = token
 
