@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '4gc^0_q3l3q1i(=9@7vacxv8^x4s)ydhn6c-yta-(1kby(z!=m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['stopbully.herokuapp.com', 'localhost', ]
 

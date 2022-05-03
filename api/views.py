@@ -7,24 +7,34 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 
-class UserAPIView(APIView):
-    #permission_classes = [IsAuthenticated]
+class UsersAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         users = CustomUser.objects.all()
         serializer = UserSerializer(users, many = True)
         return Response(serializer.data)
 
+class UserAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = CustomUser.objects.all()
+        
 class UserRegisterAPIView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data = request.data)
-        data = {}
+        response_data = {}
         if serializer.is_valid():
             account = serializer.save()
-            data['email'] = account.email
+            account = CustomUser.objects.get(pk=account.pk)
+            account.username = 'user_' + str(account.pk)
+            account = serializer.save()
+            response_data['id'] = account.pk
+            response_data['username'] = account.username
+            response_data['email'] = account.email
             token = Token.objects.get(user=account).key
-            data['token'] = token
+            response_data['token'] = token
 
-            return Response(token, status = status.HTTP_201_CREATED)
+            return Response(response_data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
