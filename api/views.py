@@ -14,10 +14,20 @@ class UsersAPIView(APIView):
         serializer = UserSerializer(users, many = True)
         return Response(serializer.data)
 
-class UserAPIView(APIView):
+class UserIDAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        user = CustomUser.objects.all()
+        user = CustomUser.objects.get(id=request.data['id'])
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+class UserTokenAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = Token.objects.get(key=request.data['key'])
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
         
 class UserRegisterAPIView(APIView):
     def post(self, request):
