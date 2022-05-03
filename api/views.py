@@ -24,7 +24,7 @@ class UserIDAPIView(APIView):
 class UserTokenAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        user = Token.objects.get(key=request.data['key'])
+        user = Token.objects.get(key='token').user
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
