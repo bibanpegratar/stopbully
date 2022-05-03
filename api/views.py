@@ -19,10 +19,10 @@ class UserAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        id = request.query_params["id"]
-        if id != None:
+        uid = request.query_params["id"]
+        if uid != None:
             try:
-                user = CustomUser.objects.get(id=id)
+                user = CustomUser.objects.get(id=uid)
                 serializer = UserSerializer(user)
                 return Response(serializer.data)
             except CustomUser.DoesNotExist:
