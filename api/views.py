@@ -24,6 +24,17 @@ class UserTokenAPIView(APIView):
             return Response(serializer.data)
         except Token.DoesNotExist:
             return Response(serializer.errors, status = status.HTTP_404_NOT_FOUND)
+
+class UserIdAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        id = request.query_params["id"]
+        try:
+            user = CustomUser.objects.get(id=id)
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        except CustomUser.DoesNotExist:
+            return Response(serializer.errors, status = status.HTTP_404_NOT_FOUND)
         
         
 class UserRegisterAPIView(APIView):
@@ -45,7 +56,7 @@ class UserRegisterAPIView(APIView):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
-class PostAPIView(APIView):
+class PostsAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         posts = Post.objects.all()
@@ -59,7 +70,7 @@ class PostAPIView(APIView):
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-class CommentAPIView(APIView):
+class CommentsAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         comments = Comment.objects.all()
