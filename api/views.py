@@ -15,26 +15,25 @@ class UsersAPIView(APIView):
         return Response(serializer.data)
 
 #view for getting user with token specified in headers
-class UserTokenAPIView(APIView):
+class UserAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request):
-        try:
-            user = request.user
-            serializer = UserSerializer(user)
-            return Response(serializer.data)
-        except Token.DoesNotExist:
-            return Response(serializer.errors, status = status.HTTP_404_NOT_FOUND)
 
-class UserIdAPIView(APIView):
-    permission_classes = [IsAuthenticated]
     def get(self, request):
         id = request.query_params["id"]
-        try:
-            user = CustomUser.objects.get(id=id)
-            serializer = UserSerializer(user)
-            return Response(serializer.data)
-        except CustomUser.DoesNotExist:
-            return Response(serializer.errors, status = status.HTTP_404_NOT_FOUND)
+        if id != None:
+            try:
+                user = CustomUser.objects.get(id=id)
+                serializer = UserSerializer(user)
+                return Response(serializer.data)
+            except CustomUser.DoesNotExist:
+                return Response(serializer.errors, status = status.HTTP_404_NOT_FOUND)
+        else:
+            try:
+                user = request.user
+                serializer = UserSerializer(user)
+                return Response(serializer.data)
+            except Token.DoesNotExist:
+                return Response(serializer.errors, status = status.HTTP_404_NOT_FOUND)
         
         
 class UserRegisterAPIView(APIView):
