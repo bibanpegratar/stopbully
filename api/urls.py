@@ -11,7 +11,7 @@ post_list = PostViewSet.as_view({
 post_detail = PostViewSet.as_view({
     'get' : 'retrieve',
     'put' : 'update',
-    'delete' : 'destroy'
+    #'delete' : 'destroy'
 })
 
 retrieve_by_user = PostViewSet.as_view({
@@ -32,7 +32,8 @@ comment_list = CommentViewSet.as_view({
     'post' : 'create'
 })
 comment_detail = CommentViewSet.as_view({
-    'get' : 'retrieve'
+    'get' : 'retrieve',
+    'put' : 'update'
 })
 
 retrieve_by_post = CommentViewSet.as_view({

@@ -48,6 +48,22 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerialzier
     permission_classes = [IsAuthenticated]
+
+    def update(self, request, partial=True, pk=None, pid=None):
+        comment = Comment.objects.get(pk=pk)
+        data = request.data
+        print(request.user.id)
+        print(comment.post_id.user_id.id)
+        
+        if comment.post_id.user_id.id == request.user.id:
+            comment.content = data['content']
+            comment.likes = data['likes']
+            comment.save()
+            serializer = self.get_serializer(comment)
+
+            return Response(serializer.data)
+        else:
+            return Response("error", status = status.HTTP_401_UNAUTHORIZED)
     
     @action(detail=False)
     def retrieve_by_post(self, request, pid=None):

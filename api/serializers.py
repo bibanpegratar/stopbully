@@ -25,6 +25,11 @@ class CommentSerialzier(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
+class UpdateCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('content', 'likes')
+
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
             required=True,
