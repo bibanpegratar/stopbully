@@ -15,6 +15,11 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
 
+class UpdatePostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('caption', 'content', 'likes')
+
 class CommentSerialzier(serializers.ModelSerializer):
     class Meta:
         model = Comment

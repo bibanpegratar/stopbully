@@ -23,7 +23,8 @@ user_list = UserViewSet.as_view({
 })
 
 user_detail = UserViewSet.as_view({
-    'get' : 'retrieve'
+    'get' : 'retrieve',
+    'delete' : 'destroy'
 })
 
 comment_list = CommentViewSet.as_view({
@@ -49,8 +50,7 @@ urlpatterns = [
     path('comments/<int:pid>/<int:pk>/', comment_detail),
     
     path('posts/', post_list),
-    path('posts/<int:uid>/<int:pk>/', post_detail),
-    path('posts/<int:uid>/', retrieve_by_user)
-    
+    path('posts/<int:uid>/', retrieve_by_user),
+    path('posts/<int:uid>/<int:pk>/', post_detail)
 ]
 

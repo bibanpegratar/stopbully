@@ -1,8 +1,7 @@
-import re
 from sqlite3 import SQLITE_DROP_INDEX
 from statistics import multimode
 from .models import CustomUser, Post, Comment
-from .serializers import CommentSerialzier, PostSerializer, UserSerializer, RegisterSerializer
+from .serializers import *
 from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +20,24 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
 
+    def update(self, request, partial=True, pk=None, uid=None):
+        posts = Post.objects.get(pk=pk)
+        data = request.data
+        print(request.user.id)
+        print(posts.user_id.id)
+        
+        if posts.user_id.id == request.user.id:
+            posts.caption = data['caption']
+            posts.content = data['content']
+            posts.likes = data['likes']
+            posts.save()
+            serializer = self.get_serializer(posts)
+
+            return Response(serializer.data)
+        else:
+            return Response("error", status = status.HTTP_401_UNAUTHORIZED)
+
+    
     @action(detail=False)
     def retrieve_by_user(self, request, uid=None):
         posts = Post.objects.filter(user_id=uid)
