@@ -11,7 +11,7 @@ post_list = PostViewSet.as_view({
 post_detail = PostViewSet.as_view({
     'get' : 'retrieve',
     'put' : 'update',
-    #'delete' : 'destroy'
+    'delete' : 'destroy'
 })
 
 retrieve_by_user = PostViewSet.as_view({
@@ -23,12 +23,12 @@ user_list = UserViewSet.as_view({
 })
 
 user_detail = UserViewSet.as_view({
-    'get' : 'retrieve',
-    'delete' : 'destroy'
+    'get' : 'retrieve'
 })
 
 current_user = UserViewSet.as_view({
-    'get' : 'current_user'
+    'get' : 'current_user',
+    'delete' : 'destroy'
 })
 
 comment_list = CommentViewSet.as_view({
@@ -37,7 +37,8 @@ comment_list = CommentViewSet.as_view({
 })
 comment_detail = CommentViewSet.as_view({
     'get' : 'retrieve',
-    'put' : 'update'
+    'put' : 'update',
+    'delete' : 'destroy'
 })
 
 retrieve_by_post = CommentViewSet.as_view({
@@ -49,6 +50,7 @@ urlpatterns = [
     path('user/change_password', UserUpdatePasswordAPIView.as_view()),
     path('user/change_email', UserUpdateEmailAPIView.as_view()),
     path('users/', user_list),
+
     path('users/<int:pk>', user_detail),
     path('login/', obtain_auth_token, name='login'),
     path('register/', UserRegisterAPIView.as_view()),
