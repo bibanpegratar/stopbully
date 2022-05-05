@@ -13,10 +13,10 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-    # def destroy(self, request):
-    #     user = CustomUser.objects.get(pk=request.user.id)
-    #     user.delete()
-    #     return Response(status = status.HTTP_200_OK)
+    def destroy(self, request):
+        user = CustomUser.objects.get(pk=request.user.id)
+        user.delete()
+        return Response(status = status.HTTP_200_OK)
 
     @action(detail=False)
     def current_user(self, request):
