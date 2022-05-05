@@ -1,5 +1,3 @@
-from sqlite3 import SQLITE_DROP_INDEX
-from statistics import multimode
 from .models import CustomUser, Post, Comment
 from .serializers import *
 from rest_framework import permissions, status, viewsets
@@ -15,10 +13,29 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+    @action(detail=False)
+    def current_user(self, request):
+        user = CustomUser.objects.get(pk=request.user.id)
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
+
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
+
+    def create(self, request):
+        data = request.data
+        data['user_id'] = request.user.id
+
+        serializer = PostSerializer(data=data)
+        if serializer.is_valid():
+            print(request.user)
+            print(serializer.validated_data)
+            post = serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors)   
 
     def update(self, request, partial=True, pk=None, uid=None):
         posts = Post.objects.get(pk=pk)
@@ -35,7 +52,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
             return Response(serializer.data)
         else:
-            return Response("error", status = status.HTTP_401_UNAUTHORIZED)
+            return Response("unauthorized", status = status.HTTP_401_UNAUTHORIZED)
 
     
     @action(detail=False)
@@ -88,4 +105,36 @@ class UserRegisterAPIView(APIView):
 
             return Response(response_data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+class UserUpdatePasswordAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = CustomUser.objects.get(pk=request.user.id)
+        data = request.data
+        if user.id == request.user.id:
+            if data['password'] == data['password2']:
+                user.set_password(data['password'])
+                user.save()
+                serializer = UserSerializer(user)
+                return Response(serializer.data)
+            else:
+                return Response({"password":"Password fields didn't match"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response("unauthorized", status = status.HTTP_401_UNAUTHORIZED)
+
+class UserUpdateEmailAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = CustomUser.objects.get(pk=request.user.id)
+        data = request.data
+        if user.id == request.user.id:
+            user.email = data['email']
+            user.save()
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        else:
+            return Response("unauthorized", status = status.HTTP_401_UNAUTHORIZED)
+            
 

@@ -27,6 +27,10 @@ user_detail = UserViewSet.as_view({
     'delete' : 'destroy'
 })
 
+current_user = UserViewSet.as_view({
+    'get' : 'current_user'
+})
+
 comment_list = CommentViewSet.as_view({
     'get' : 'list',
     'post' : 'create'
@@ -41,6 +45,9 @@ retrieve_by_post = CommentViewSet.as_view({
 })
 
 urlpatterns = [
+    path('user/', current_user),
+    path('user/change_password', UserUpdatePasswordAPIView.as_view()),
+    path('user/change_email', UserUpdateEmailAPIView.as_view()),
     path('users/', user_list),
     path('users/<int:pk>', user_detail),
     path('login/', obtain_auth_token, name='login'),
