@@ -46,7 +46,7 @@ def send_activation_email(user, request):
     })
 
     email = EmailMessage(subject=email_subject, body=email_body,
-                         from_email=settings.EMAIL_FROM_USER,
+                         from_email=settings.DEFAULT_FROM_EMAIL,
                          to=[user.email]
                          )
 

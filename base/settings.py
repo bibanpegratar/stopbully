@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 import django_on_heroku
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
+    'anymail',
     'rest_framework',
     'rest_framework.authtoken'
 ]
@@ -141,12 +147,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 django_on_heroku.settings(locals())
 
+ANYMAIL = {
+    # (exact settings here depend on your ESP...)
+    "SENDINBLUE_API_KEY": env('KEY')
+}
+
 #email config
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_FROM_USER = 'bibanpegratar@gmail.com'
-EMAIL_HOST = 'smtp-relay.sendinblue.com'
-EMAIL_HOST_USER = 'bibanpegratar@gmail.com'
-EMAIL_HOST_PASSWORD = 'v2J493P7UvRqNWQ1p'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
+EMAIL_BACKEND = 'anymail.backends.sendinblue.EmailBackend'
+DEFAULT_FROM_EMAIL = 'v9hhjdbxxy@privaterelay.appleid.com'
 
