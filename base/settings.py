@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
+    'face_detection.apps.FaceDetectionConfig',
     'anymail',
     'rest_framework',
     'rest_framework.authtoken'

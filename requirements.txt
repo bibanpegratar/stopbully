@@ -11,6 +11,8 @@ djangorestframework==3.13.1
 filelock==3.6.0
 gunicorn==20.1.0
 idna==3.3
+numpy==1.22.3
+opencv-python==4.5.5.64
 platformdirs==2.5.2
 psycopg2-binary==2.9.3
 pytz==2022.1
