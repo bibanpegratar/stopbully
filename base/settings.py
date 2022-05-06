@@ -154,5 +154,5 @@ ANYMAIL = {
 
 #email config
 EMAIL_BACKEND = 'anymail.backends.sendinblue.EmailBackend'
-DEFAULT_FROM_EMAIL = 'v9hhjdbxxy@privaterelay.appleid.com'
+DEFAULT_FROM_EMAIL = 'bibanpegratar@gmail.com'
 
