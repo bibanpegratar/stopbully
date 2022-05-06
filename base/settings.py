@@ -27,6 +27,7 @@ SECRET_KEY = '4gc^0_q3l3q1i(=9@7vacxv8^x4s)ydhn6c-yta-(1kby(z!=m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TESTING = False
 
 ALLOWED_HOSTS = ['stopbully.herokuapp.com', 'localhost', ]
 
@@ -139,4 +140,13 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 django_on_heroku.settings(locals())
+
+#email config
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_FROM_USER = 'bibanpegratar@gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'bibanpegratar@gmail.com'
+EMAIL_HOST_PASSWORD = 'sejgog-nubpyq-6nudbE'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
 

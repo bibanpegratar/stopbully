@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import *
-from rest_framework.authtoken.views import obtain_auth_token
+# from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework import renderers
 
 post_list = PostViewSet.as_view({
@@ -45,6 +45,7 @@ retrieve_by_post = CommentViewSet.as_view({
     'get' : 'retrieve_by_post'
 })
 
+
 urlpatterns = [
     path('user/', current_user),
     path('user/change_password', UserUpdatePasswordAPIView.as_view()),
@@ -54,6 +55,7 @@ urlpatterns = [
     path('users/<int:pk>', user_detail),
     path('login/', obtain_auth_token, name='login'),
     path('register/', UserRegisterAPIView.as_view()),
+    path('activate-user/<uidb64>/<token>', activate_user, name='activate'),
 
     path('comments/', comment_list),
     path('comments/<int:pid>/', retrieve_by_post),
