@@ -7,6 +7,52 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
+from rest_framework.authtoken.views import obtain_auth_token, ObtainAuthToken
+from rest_framework import parsers, renderers
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.compat import coreapi, coreschema
+from rest_framework.schemas import ManualSchema
+from rest_framework.schemas import coreapi as coreapi_schema
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from .utils import generate_token
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
+import threading
+from rest_framework.decorators import api_view
+from django.shortcuts import render, redirect
+
+class EmailThread(threading.Thread):
+
+    def __init__(self, email):
+        self.email = email
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.email.send()
+
+def send_activation_email(user, request):
+    current_site = get_current_site(request)
+    email_subject = 'Activate your account'
+    generated_token = generate_token.make_token(user)
+
+    email_body = render_to_string('verification/activate.html', {
+        'user': user,
+        'domain': current_site,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': generated_token
+    })
+
+    email = EmailMessage(subject=email_subject, body=email_body,
+                         from_email=settings.EMAIL_FROM_USER,
+                         to=[user.email]
+                         )
+
+    print(generated_token)
+    if not settings.TESTING:
+        EmailThread(email).start()
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -129,9 +175,14 @@ class CommentViewSet(viewsets.ModelViewSet):
 class UserRegisterAPIView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data = request.data)
+        
         response_data = {}
         if serializer.is_valid():
             account = serializer.save()
+
+            if not settings.TESTING:
+                send_activation_email(account, request)
+
             account = CustomUser.objects.get(pk=account.id)
             account.user = 'user_' + str(account.pk)
             new_account = account.save()
@@ -139,7 +190,7 @@ class UserRegisterAPIView(APIView):
             # response_data['user'] = account.user
             # response_data['email'] = account.email
             token = Token.objects.get(user=account).key
-            response_data['token'] = token
+            # response_data['token'] = token
 
             return Response(response_data, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
@@ -175,4 +226,83 @@ class UserUpdateEmailAPIView(APIView):
         else:
             return Response("unauthorized", status = status.HTTP_401_UNAUTHORIZED)
             
+
+class ObtainAuthToken(APIView):
+    throttle_classes = ()
+    permission_classes = ()
+    parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
+    renderer_classes = (renderers.JSONRenderer,)
+    serializer_class = AuthTokenSerializer
+
+    if coreapi_schema.is_enabled():
+        schema = ManualSchema(
+            fields=[
+                coreapi.Field(
+                    name="username",
+                    required=True,
+                    location='form',
+                    schema=coreschema.String(
+                        title="Username",
+                        description="Valid username for authentication",
+                    ),
+                ),
+                coreapi.Field(
+                    name="password",
+                    required=True,
+                    location='form',
+                    schema=coreschema.String(
+                        title="Password",
+                        description="Valid password for authentication",
+                    ),
+                ),
+            ],
+            encoding="application/json",
+        )
+
+    def get_serializer_context(self):
+        return {
+            'request': self.request,
+            'format': self.format_kwarg,
+            'view': self
+        }
+
+    def get_serializer(self, *args, **kwargs):
+        kwargs['context'] = self.get_serializer_context()
+        return self.serializer_class(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        token, created = Token.objects.get_or_create(user=user)
+        if not settings.TESTING:
+            print(user.is_email_verified)
+
+            if not user.is_email_verified:
+                print('not verified')
+                return Response('verify user first')
+
+        return Response({'token': token.key})
+
+obtain_auth_token = ObtainAuthToken.as_view()
+
+
+@api_view(['GET'])
+def activate_user(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = CustomUser.objects.get(pk=uid)
+
+    except Exception as e:
+        user = None
+
+    if user and generate_token.check_token(user, token):
+        user.is_email_verified = True
+        user.save()
+
+        return render(request, 'verification/activated.html')
+    return render(request, 'verification/already_activated.html')
+
+
 
