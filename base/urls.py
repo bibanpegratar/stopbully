@@ -25,6 +25,6 @@ urlpatterns = [
     path('face-detection/', include('face_detection.urls'))
 ]
 
-if settings.DEBUG:
+if settings.UPLOAD_LOCALLY:
         urlpatterns += static(settings.MEDIA_URL,
                               document_root=settings.MEDIA_ROOT)

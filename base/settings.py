@@ -23,6 +23,7 @@ environ.Env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = os.path.join(BASE_DIR,"media/")
 MEDIA_URL = "/media/"
+UPLOAD_LOCALLY = False
 
 
 # Quick-start development settings - unsuitable for production
@@ -33,7 +34,7 @@ MEDIA_URL = "/media/"
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 TESTING = False
 
 ALLOWED_HOSTS = ['stopbully.herokuapp.com', 'localhost', ]
