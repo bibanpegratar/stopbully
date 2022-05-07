@@ -3,6 +3,7 @@ from .views import *
 # from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework import renderers
 
+
 post_list = PostViewSet.as_view({
     'get' : 'list',
     'post' : 'create'

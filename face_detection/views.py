@@ -2,6 +2,15 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import numpy as np
+from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
+from api.models import CustomUser
+
+from face_detection.serializers import ImageSerializer
+from .models import Image
+from rest_framework.permissions import IsAuthenticated
+from django.core.files.base import ContentFile
+from rest_framework.views import APIView
 
 # import urllib # python 2
 import urllib.request # python 3
@@ -13,49 +22,56 @@ import os
 FACE_DETECTOR_PATH = "{base_path}/cascades/haarcascade_frontalface_default.xml".format(
 	base_path=os.path.abspath(os.path.dirname(__file__)))
 
-@csrf_exempt
-def detect(request):
+class DetectImage(APIView):
+	serializer_class = ImageSerializer
+	permission_classes = [IsAuthenticated]
 
-	# initialize the data dictionary to be returned by the request
-	data = {"success": False}
+	def post(self, request):
+		data = {"success": False}
 
-	# check to see if this is a post request
-	if request.method == "POST":
-
-		# check to see if an image was uploaded
 		if request.FILES.get("image", None) is not None:
-
-			# grab the uploaded image
 			image = _grab_image(stream=request.FILES["image"])
 
 		# otherwise, assume that a URL was passed in
 		else:
-			# grab the URL from the request
-
 			url = request.POST.get("url", None)
-			# if the URL is None, then return an error
 
 			if url is None:
 				data["error"] = "No URL provided."
 				return JsonResponse(data)
-			# load the image and convert
+
 			image = _grab_image(url=url)
 
 		# convert the image to grayscale, load the face cascade detector,
 		# and detect faces in the image
+		raw_image = image
 		image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 		detector = cv2.CascadeClassifier(FACE_DETECTOR_PATH)
 		rects = detector.detectMultiScale(image, scaleFactor=1.1, minNeighbors=5,
 			minSize=(30, 30), flags = cv2.CASCADE_SCALE_IMAGE)
 
 		# construct a list of bounding boxes from the detection
+		
 		rects = [(int(x), int(y), int(x + w), int(y + h)) for (x, y, w, h) in rects]
+		print(rects)
+
+		cv2.rectangle(raw_image, (rects[0][0], rects[0][1]), (rects[0][2], rects[0][3]), (255,0,0), -1)
+
+		# upload image
+		ret, buf = cv2.imencode('.jpg', raw_image) # cropped_image: cv2 / np array
+		content = ContentFile(buf.tobytes())
+		# user_id = Token.objects.get(key=request.auth.key).user_id
+		# user = CustomUser.objects.get(id=request.user.id)
+		img_model = Image(user_id=request.user)
+		img_model.image.save('output.jpg', content)
+		
+		print(img_model.image)
 
 		# update the data dictionary with the faces detected
 		data.update({"num_faces": len(rects), "faces": rects, "success": True})
 
-	# return a JSON response
-	return JsonResponse(data)
+		# return a JSON response
+		return JsonResponse(data)
 
 def _grab_image(path=None, stream=None, url=None):
 	# if the path is not None, then load the image from disk

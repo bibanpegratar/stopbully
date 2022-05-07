@@ -21,6 +21,8 @@ environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_URL = os.path.join(BASE_DIR,"media/")
+MEDIA_URL = "/media/"
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 TESTING = False
 
 ALLOWED_HOSTS = ['stopbully.herokuapp.com', 'localhost', ]
@@ -97,10 +99,10 @@ WSGI_APPLICATION = 'base.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'd6bjou2m7k85ff',
-        'USER' : 'gnskbfmmmhljgv',
-        'PASSWORD' : '4b2e06d2dc8a9c64a20835cb43e52060569a8f5f8c7506df6a81f85abf8f0b7f',
-        'HOST' : 'ec2-176-34-211-0.eu-west-1.compute.amazonaws.com',
+        'NAME': 'df5nn2pup6h885',
+        'USER' : 'wujycygdpeqxhw',
+        'PASSWORD' : 'a5fb8eb3d88c4e0aab344cfe24370a18c686b93fbb0e7fcb642570025b570f25',
+        'HOST' : 'ec2-3-248-121-12.eu-west-1.compute.amazonaws.com',
         'PORT' : '5432'
     }
 }
