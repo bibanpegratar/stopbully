@@ -31,7 +31,7 @@ def create_auth_token(sender, instance = None, created = False, **kwargs):
 class Post(models.Model):
     user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='user_id')
     caption = models.CharField(max_length=250, default='')
-    content = models.CharField(max_length=2500, default='')
+    content = models.TextField(max_length=2500, default='')
     likes = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True, null=True, editable=False)
     last_modified = models.DateTimeField(auto_now=True, null=True, editable=False)
@@ -41,7 +41,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post_id = models.ForeignKey('Post', on_delete=models.CASCADE, db_column='post_id')
-    content = models.CharField(max_length=500, default='')
+    content = models.TextField(max_length=500, default='')
     likes = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True, null=True, editable=False)
     last_modified = models.DateTimeField(auto_now=True, null=True, editable=False)
