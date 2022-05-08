@@ -95,9 +95,13 @@ class ProcessImage(viewsets.ModelViewSet):
 		content = ContentFile(buf.tobytes())
 		# user_id = Token.objects.get(key=request.auth.key).user_id
 		# user = CustomUser.objects.get(id=request.user.id)
+
+		img_model = Image(user_id=request.user)
 		if len(rects) > 0:
-			img_model = Image(user_id=request.user, has_face=True)
-			
+			img_model.has_face = True
+		else:
+			img_model.has_face = False
+
 		img_model.image.save('output.jpg', content)
 		img_model.save()
 
