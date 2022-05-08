@@ -12,10 +12,15 @@ images = ProcessImage.as_view({
 #     'get' : 'get_images_ids'
 # })
 
+image = ProcessImage.as_view({
+    'get' : 'retrieve'
+})
+
+
 
 
 urlpatterns = [
     path('images/', images),
     # path('images/<uid>', images_of_user),
-    path('images/<uid>/<pk>', GetImageAPIView.as_view())
+    path('images/<uid>/<pk>', image)
 ]

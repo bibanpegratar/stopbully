@@ -14,6 +14,10 @@ import os
 from pathlib import Path
 import django_on_heroku
 import environ
+import cloudinary
+import cloudinary_storage
+import cloudinary.uploader
+import cloudinary.api
 
 # Initialise environment variables
 env = environ.Env()
@@ -21,8 +25,6 @@ environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-MEDIA_URL = os.path.join(BASE_DIR,"media/")
-MEDIA_URL = "/media/"
 UPLOAD_LOCALLY = False
 
 
@@ -36,8 +38,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 TESTING = False
-
-ALLOWED_HOSTS = ['stopbully.herokuapp.com', 'localhost', ]
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'api.CustomUser'
 REST_FRAMEWORK= {
@@ -57,6 +58,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
     'face_detection.apps.FaceDetectionConfig',
+    'cloudinary',
+    'cloudinary_storage',
     'anymail',
     'rest_framework',
     'rest_framework.authtoken'
@@ -144,6 +147,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+CLOUDINARY_CLOUD_NAME = "dsj71t1e9"
+CLOUDINARY_API_KEY = "385862519386563"
+CLOUDINARY_API_SECRET = "iegTsQTKJyFzJTcgo0s9ArU6Cyw"
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

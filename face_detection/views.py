@@ -20,6 +20,7 @@ import urllib.request # python 3
 import json
 import cv2
 import os
+import cloudinary
 
 from .custom_renderers import *
 
@@ -37,10 +38,14 @@ class ProcessImage(viewsets.ModelViewSet):
 
 	def list(self, request):
 		images = self.get_queryset()
-		
 		serializer = ImageDataSerializer(images, many=True)
 		print(serializer.data)
 		return Response(serializer.data)
+
+	def retrieve(self, request, pk=None, uid=None):
+		image = Image.objects.get(pk = pk)
+		serializer = ImageDataSerializer(image)
+		return JsonResponse(serializer.data)
 
 	def create(self, request):
 		data = {"success": False}
@@ -92,29 +97,14 @@ class ProcessImage(viewsets.ModelViewSet):
 		# user = CustomUser.objects.get(id=request.user.id)
 		if len(rects) > 0:
 			img_model = Image(user_id=request.user, has_face=True)
+			
 		img_model.image.save('output.jpg', content)
+		img_model.save()
+
+		serializer = ImageDataSerializer(img_model)
+
+		return JsonResponse(serializer.data)
 		
-		print(img_model.image)
-
-		# update the data dictionary with the faces detected
-		# data.update({"num_faces": len(rects), "faces": rects, "success": True})
-
-		data.update({"success":True, "id":  img_model.id, "user_id" : img_model.user_id.id, "path" : img_model.image.path})
-
-		# return a JSON response
-		return JsonResponse(data)
-		
-
-class GetImageAPIView(APIView):
-	permission_classes = [IsAuthenticated]
-	renderer_classes = [JPEGRenderer]
-
-	def get(self, request, uid=None, pk=None):
-		image = Image.objects.get(pk = pk)
-		serialzier = ImageSerializer(image)
-
-		return Response(image)
-
 def grab_image(path=None, stream=None, url=None):
 	# if the path is not None, then load the image from disk
 	if path is not None:
