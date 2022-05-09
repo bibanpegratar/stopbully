@@ -17,8 +17,6 @@ image = ProcessImage.as_view({
 })
 
 
-
-
 urlpatterns = [
     path('images/', images),
     # path('images/<uid>', images_of_user),

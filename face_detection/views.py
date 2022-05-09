@@ -65,6 +65,8 @@ class ProcessImage(viewsets.ModelViewSet):
 
 		# convert the image to grayscale, load the face cascade detector,
 		# and detect faces in the image
+
+		#converteste imaginea in alb-negru, 
 		raw_image = image
 		image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 		detector = cv2.CascadeClassifier(FACE_DETECTOR_PATH)
